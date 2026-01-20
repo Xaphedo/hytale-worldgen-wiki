@@ -7,22 +7,29 @@
 </head>
 <body>
   <script>
-    // 1. Save the original window.open function
-    const originalOpen = window.open;
-    
-    // 2. Overwrite it with our interceptor
-    window.open = function(url, name, specs) {
-      // 3. Check if it's the GitHub Login URL asking for too much power
-      if (typeof url === "string" && url.includes("github.com/login/oauth/authorize")) {
-        if (url.includes("scope=repo")) {
-          // 4. Swap 'repo' (private) for 'public_repo' (public only)
-          console.log("Patching GitHub scope to public_repo...");
-          url = url.replace("scope=repo", "scope=public_repo");
+    (function() {
+      const originalOpen = window.open;
+      
+      window.open = function(url, name, specs) {
+        // 1. Log everything so we can see what's happening in F12 Console
+        console.log("[Auto-Patcher] Intercepted window.open call");
+        
+        if (typeof url === "string" && url.indexOf("github.com/login/oauth") !== -1) {
+            console.log("[Auto-Patcher] Found GitHub Login URL:", url);
+            
+            // 2. Use Regex to replace scope=repo OR scope%3Drepo (encoded version)
+            // This catches it even if the browser encoded the symbols
+            if (/scope(=|%3D)repo/.test(url)) {
+                url = url.replace(/scope(=|%3D)repo/g, "scope$1public_repo");
+                console.log("[Auto-Patcher] SUCCESS: Rewrote URL to:", url);
+            } else {
+                console.log("[Auto-Patcher] Warning: 'scope=repo' not found in URL string.");
+            }
         }
-      }
-      // 5. Open the window normally with the fixed URL
-      return originalOpen(url, name, specs);
-    };
+        
+        return originalOpen.apply(window, arguments);
+      };
+    })();
   </script>
   <script src="https://unpkg.com/decap-cms@^3.0.0/dist/decap-cms.js"></script>
 </body>
