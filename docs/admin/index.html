@@ -6,25 +6,23 @@
   <title>Wiki Manager</title>
 </head>
 <body>
-  <script>
+<script>
     (function() {
       const originalOpen = window.open;
       
       window.open = function(url, name, specs) {
-        // 1. Log everything so we can see what's happening in F12 Console
-        console.log("[Auto-Patcher] Intercepted window.open call");
+        // 1. Log the EXACT URL being opened so we can see it
+        console.log("[Auto-Patcher] CMS is trying to open:", url);
         
-        if (typeof url === "string" && url.indexOf("github.com/login/oauth") !== -1) {
-            console.log("[Auto-Patcher] Found GitHub Login URL:", url);
+        // 2. Hunt for 'scope=repo' in ANY url (GitHub, Vercel, or Netlify)
+        if (typeof url === "string" && (url.includes("scope=repo") || url.includes("scope%3Drepo"))) {
+            console.log("[Auto-Patcher] CAUGHT IT: Found private scope.");
             
-            // 2. Use Regex to replace scope=repo OR scope%3Drepo (encoded version)
-            // This catches it even if the browser encoded the symbols
-            if (/scope(=|%3D)repo/.test(url)) {
-                url = url.replace(/scope(=|%3D)repo/g, "scope$1public_repo");
-                console.log("[Auto-Patcher] SUCCESS: Rewrote URL to:", url);
-            } else {
-                console.log("[Auto-Patcher] Warning: 'scope=repo' not found in URL string.");
-            }
+            // 3. Replace it with public_repo
+            // The Regex handles both scope=repo and scope%3Drepo (encoded)
+            url = url.replace(/scope(=|%3D)repo/g, "scope$1public_repo");
+            
+            console.log("[Auto-Patcher] SUCCESS: Patched URL to:", url);
         }
         
         return originalOpen.apply(window, arguments);
