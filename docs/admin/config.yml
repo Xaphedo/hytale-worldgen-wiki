@@ -2,7 +2,7 @@ backend:
   name: github
   repo: Xaphedo/hytale-worldgen-wiki
   branch: main
-  base_url: https://netlify-cms-github-oauth-provider-aww2m1utw-xaphedos-projects.vercel.app/
+  base_url: https://netlify-cms-github-oauth-provider-aww2m1utw-xaphedos-projects.vercel.app
   auth_endpoint: 
   scope: public_repo
   open_authoring: true
