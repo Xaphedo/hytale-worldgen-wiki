@@ -4,6 +4,7 @@ backend:
   branch: main
   base_url: https://netlify-cms-github-oauth-provider-aww2m1utw-xaphedos-projects.vercel.app/
   auth_endpoint: auth
+  scope: ['public_repo']
 
 # This creates the "Login with Netlify Identity" button
 media_folder: "docs/assets/images" # Where images are saved in the repo
