@@ -6,6 +6,24 @@
   <title>Wiki Manager</title>
 </head>
 <body>
+  <script>
+    // 1. Save the original window.open function
+    const originalOpen = window.open;
+    
+    // 2. Overwrite it with our interceptor
+    window.open = function(url, name, specs) {
+      // 3. Check if it's the GitHub Login URL asking for too much power
+      if (typeof url === "string" && url.includes("github.com/login/oauth/authorize")) {
+        if (url.includes("scope=repo")) {
+          // 4. Swap 'repo' (private) for 'public_repo' (public only)
+          console.log("Patching GitHub scope to public_repo...");
+          url = url.replace("scope=repo", "scope=public_repo");
+        }
+      }
+      // 5. Open the window normally with the fixed URL
+      return originalOpen(url, name, specs);
+    };
+  </script>
   <script src="https://unpkg.com/decap-cms@^3.0.0/dist/decap-cms.js"></script>
 </body>
 </html>
