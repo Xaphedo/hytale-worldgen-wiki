@@ -1,5 +1,3 @@
-publish_mode: editorial_workflow
-
 backend:
   name: github
   repo: Xaphedo/hytale-worldgen-wiki
@@ -8,6 +6,8 @@ backend:
   auth_endpoint: 
   scope: ['public_repo']  
   open_authoring: true
+
+publish_mode: editorial_workflow
 
 # This creates the "Login with Netlify Identity" button
 media_folder: "docs/assets/images" # Where images are saved in the repo
